@@ -68,6 +68,48 @@
     [alertWindow.rootViewController presentViewController:alertController animated:true completion:nil];
 }
 
+- (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message andButtonTitle:(NSString *)buttonTitle {
+    
+    __block UIWindow *alertWindow;
+    
+    
+    UIAlertController * alertController = [UIAlertController
+                                           alertControllerWithTitle:title
+                                           message:message
+                                           preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction
+                         actionWithTitle:buttonTitle
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction * action)
+                         {
+                             [alertController dismissViewControllerAnimated:YES completion:nil];
+                             alertWindow.hidden = YES;
+                             alertWindow = nil;
+                             
+                         }];
+    
+    [alertController addAction:ok];
+    
+    
+    alertWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    alertWindow.rootViewController = [[UIViewController alloc] init];
+    
+    id<UIApplicationDelegate> delegate = [UIApplication sharedApplication].delegate;
+    // Applications that does not load with UIMainStoryboardFile might not have a window property:
+    if ([delegate respondsToSelector:@selector(window)]) {
+        // we inherit the main window's tintColor
+        alertWindow.tintColor = delegate.window.tintColor;
+    }
+    
+    // window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
+    UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
+    alertWindow.windowLevel = topWindow.windowLevel + 1;
+    
+    [alertWindow makeKeyAndVisible];
+    [alertWindow.rootViewController presentViewController:alertController animated:true completion:nil];
+}
+
 - (void)showAlertWithCanceButton: (NSString *)cancelButtonTitle OKButton:(NSString *)okButtonTitle Title:(NSString *)title andMessage:(NSString *)message {
     
     __block UIWindow *alertWindow;
