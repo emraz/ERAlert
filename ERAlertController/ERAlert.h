@@ -27,6 +27,7 @@
 + (ERAlert *)sharedInstance;
 
 - (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message;
+- (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message andButtonTitle:(NSString *)buttonTitle;
 - (void)showAlertWithCanceButton: (NSString *)cancelButtonTitle OKButton:(NSString *)okButtonTitle Title:(NSString *)title andMessage:(NSString *)message;
 
 
