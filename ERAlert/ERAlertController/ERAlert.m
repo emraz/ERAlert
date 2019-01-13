@@ -11,22 +11,13 @@
 
 @implementation ERAlert
 
-+ (ERAlert *)sharedInstance {
-    static ERAlert *sharedMyInstance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedMyInstance = [[self alloc] init];
-    });
-    return sharedMyInstance;
-}
-
 - (id)init {
     if (self = [super init]) {
     }
     return self;
 }
 
-- (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message {
++ (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message withHandler:(ERAlertResponse)response {
     
     __block UIWindow *alertWindow;
     
@@ -44,7 +35,8 @@
                              [alertController dismissViewControllerAnimated:YES completion:nil];
                              alertWindow.hidden = YES;
                              alertWindow = nil;
-                             
+                             if (response)
+                                 response(YES);
                          }];
 
     [alertController addAction:ok];
@@ -68,7 +60,7 @@
     [alertWindow.rootViewController presentViewController:alertController animated:true completion:nil];
 }
 
-- (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message andButtonTitle:(NSString *)buttonTitle {
++ (void)showAlertWithTitle:(NSString *)title andMessage:(NSString *)message andButtonTitle:(NSString *)buttonTitle withHandler:(ERAlertResponse)response {
     
     __block UIWindow *alertWindow;
     
@@ -86,7 +78,8 @@
                              [alertController dismissViewControllerAnimated:YES completion:nil];
                              alertWindow.hidden = YES;
                              alertWindow = nil;
-                             
+                             if (response)
+                                 response(YES);
                          }];
     
     [alertController addAction:ok];
@@ -110,7 +103,7 @@
     [alertWindow.rootViewController presentViewController:alertController animated:true completion:nil];
 }
 
-- (void)showAlertWithCanceButton: (NSString *)cancelButtonTitle OKButton:(NSString *)okButtonTitle Title:(NSString *)title andMessage:(NSString *)message {
++ (void)showAlertWithCanceButton: (NSString *)cancelButtonTitle OKButton:(NSString *)okButtonTitle Title:(NSString *)title andMessage:(NSString *)message withHandler:(ERAlertResponse)response {
     
     __block UIWindow *alertWindow;
     
@@ -128,11 +121,9 @@
                              [alertController dismissViewControllerAnimated:YES completion:nil];
                              alertWindow.hidden = YES;
                              alertWindow = nil;
-                             
-                             if (self.delegate && [self.delegate respondsToSelector:@selector(cancelButtonPressed)]) {
-                                 [self.delegate okButtonPressed];
-                             }
-                             
+
+                             if (response)
+                                 response(YES);
                          }];
     UIAlertAction* cancel = [UIAlertAction
                              actionWithTitle:cancelButtonTitle
@@ -142,10 +133,8 @@
                                  [alertController dismissViewControllerAnimated:YES completion:nil];
                                  alertWindow.hidden = YES;
                                  alertWindow = nil;
-                                 
-                                 if (self.delegate && [self.delegate respondsToSelector:@selector(cancelButtonPressed)]) {
-                                     [self.delegate cancelButtonPressed];
-                                 }
+                                 if (response)
+                                     response(NO);
                              }];
     [alertController addAction:cancel];
     [alertController addAction:ok];
